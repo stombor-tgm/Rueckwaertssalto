@@ -1,10 +1,11 @@
 # Requirementsanalyse
 
-- Eine CLI Verarbeitung
+- **Eine CLI Verarbeitung**
   - Datenbankurl, User, PW, Datenbankname, EER/RM, Filename können Übergeben werden.
+  - Erstellt neue Verbindung, bekommt Datenbank Objekt und erstellt damit neues RM bzw. EER Diagram
 
 
-- Eine Datenstruktur welche die Metadaten einer Datenbank speichert.
+- **Eine Datenstruktur welche die Metadaten einer Datenbank speichert.**
   - Erstellen eines Datenbank Objektes
     - Name und Tabellen werden gespeichert.
     - Setter und Getter Methoden.
@@ -21,14 +22,11 @@
     - FKentfert als Relation zum Attribut.
 
 
-- Eine Verarbeitung welche die Metadaten aus der Datenbank ausliest und in die Datenstruktur speichert.
-  - 
+- **Eine Verarbeitung welche die Metadaten aus der Datenbank ausliest und in die Datenstruktur speichert.**
+  - Auslesen der Tabellen Information (name, alle Attributnamen bzw. Typen)
+  - Auslesen des FK Namen in der Tabelle, der Quellen Tabelle und den Namen in der Quellen Tabelle für alle FK'S
+  - Auslesen der PK's
+  - Speichern der Daten in die Datenstruktur und Rückgabe eines Database Objektes an die CLI Verarbeitung
 
 
-- Eine Verarbeitung zur Erstellung von RM Files (.txt)
-
-
-- Eine passenden Library für die grafische Verarbeitung.
-
-
-- Ein Verarbeitung zur Erstellung von ERD Files (.png/.jpeg)
+- **Eine passenden Library für die grafische Verarbeitung (damit toEER() umgesetzt werden kann).**
