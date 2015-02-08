@@ -68,35 +68,53 @@ import java.sql.*;
 		}
 
 		@Override
-		public String read() {
-			String ausgabe="";
+		public Datenbank read() {
+			Datenbank db = null;
 		    try {
 		    	System.out.println("Creating statement...");
 				this.stmt = this.conn.createStatement();
 			    DatabaseMetaData dbmd = this.conn.getMetaData();
 			    ResultSet rsmdtable = dbmd.getTables(null, null, null, null);
-
-			    ausgabe=ausgabe+"\n"+"\n";
+			    db = new Datenbank(this.dbname);
 			    while(rsmdtable.next()){
-			    	ausgabe=ausgabe+rsmdtable.getString(3)+"\n";
+			    	
+			    	Tabelle table = new Tabelle(rsmdtable.getString(3));
+			    	
 			    	String sql="SELECT * FROM "+rsmdtable.getString(3);
 				    this.rs = this.stmt.executeQuery(sql);
 				    ResultSetMetaData rsmd = this.rs.getMetaData();
-			    	ResultSet rsmdfk = dbmd.getImportedKeys(null, null, rsmdtable.getString(3));
-			    	ResultSet rsmdpk = dbmd.getPrimaryKeys(null,null,rsmdtable.getString(3));
 			    	int felderanz = rsmd.getColumnCount();
+			    	
 				    for(int i=1;i<=felderanz;i++){
-				    	ausgabe=ausgabe+rsmd.getColumnName(i)+" <"+rsmd.getColumnTypeName(i)+"> | ";
+				    	Attribut attribute = new Attribut(rsmd.getColumnName(i),rsmd.getColumnTypeName(i));
+				    	table.addAttribute(attribute);
 				    }
-				    ausgabe=ausgabe+"\n";
+				    db.addTable(table);
+			    }
+			    ResultSet rsmdtablezwei = dbmd.getTables(null, null, null, null);
+			    while(rsmdtablezwei.next()){
+			    	
+			    	Tabelle table = db.gettablebyname(rsmdtablezwei.getString(3));
+			    	
+			    	String sql="SELECT * FROM "+rsmdtablezwei.getString(3);
+				    this.rs = this.stmt.executeQuery(sql);
+				    ResultSetMetaData rsmd = this.rs.getMetaData();
+			    	ResultSet rsmdfk = dbmd.getImportedKeys(null, null, rsmdtablezwei.getString(3));
+			    	ResultSet rsmdpk = dbmd.getPrimaryKeys(null,null,rsmdtablezwei.getString(3));
+			    	
 			    	while(rsmdfk.next()){
-				    	ausgabe=ausgabe+rsmdfk.getString("FKCOLUMN_NAME")+":"+rsmdfk.getString("PKTABLE_NAME")+"."+rsmdfk.getString("PKCOLUMN_NAME")+" %% ";
+				    	Attribut attribute = table.getattributebyname(rsmdfk.getString("FKCOLUMN_NAME"));
+				    	attribute.setFK(true);
+				    	attribute.setFKtable(db.gettablebyname(rsmdfk.getString("PKTABLE_NAME")));
+				    	attribute.setFKattribute(db.gettablebyname(rsmdfk.getString("PKTABLE_NAME")).getattributebyname(rsmdfk.getString("PKCOLUMN_NAME")));
+				    	table.setattributebyname(attribute.getName(), attribute);
 				    }
-			    	ausgabe=ausgabe+"\n";
 			    	while(rsmdpk.next()){
-				    	ausgabe=ausgabe+rsmdpk.getString("COLUMN_NAME")+" ;; ";
+				    	Attribut attribute = table.getattributebyname(rsmdpk.getString("COLUMN_NAME"));
+				    	attribute.setPK(true);
+				    	table.setattributebyname(attribute.getName(), attribute);
 				    }
-			    	ausgabe=ausgabe+"\n"+"\n";
+			    	db.settablebyname(table.getName(), table);
 			    }
 			    this.rs.close();
 			    this.stmt.close();
@@ -118,7 +136,7 @@ import java.sql.*;
 			    	se.printStackTrace();
 			    }//end finally try
 			}
-			return ausgabe;
+			return db;
 		}
 
 	}

@@ -8,6 +8,6 @@ public interface DbMeta {
 	public void setTablename(String tablename);
 	
 	public boolean createConnection();
-	public String read();
+	public Datenbank read();
 
 }
