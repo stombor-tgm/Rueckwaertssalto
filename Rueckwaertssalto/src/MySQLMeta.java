@@ -96,9 +96,6 @@ import java.sql.*;
 			    	
 			    	Tabelle table = db.gettablebyname(rsmdtablezwei.getString(3));
 			    	
-			    	String sql="SELECT * FROM "+rsmdtablezwei.getString(3);
-				    this.rs = this.stmt.executeQuery(sql);
-				    ResultSetMetaData rsmd = this.rs.getMetaData();
 			    	ResultSet rsmdfk = dbmd.getImportedKeys(null, null, rsmdtablezwei.getString(3));
 			    	ResultSet rsmdpk = dbmd.getPrimaryKeys(null,null,rsmdtablezwei.getString(3));
 			    	
